@@ -1,9 +1,14 @@
 package cmd
 
-import "log"
+import (
+	"fmt"
+)
 
-func FailOnError(err error, msg string) {
+func FailOnError(err error, msg string) int {
 	if err != nil {
-		log.Panicf("%s: %s", msg, err)
+		fmt.Printf("%s: %s\n", msg, err)
+		return 400
 	}
+
+	return 200
 }

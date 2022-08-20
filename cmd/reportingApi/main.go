@@ -25,14 +25,16 @@ func main() {
 		messageModel := models.Message{}
 		var messageArray []models.Message
 
+		status := 200
+
 		var messages []string
 		if err != redis.Nil {
 			err = json.Unmarshal([]byte(cachedMessages), &messages)
-			FailOnError(err, "unmarshal error")
+			status = FailOnError(err, "unmarshal error")
 
 			for _, message := range messages {
 				err = json.Unmarshal([]byte(message), &messageModel)
-				FailOnError(err, "unmarshal error")
+				status = FailOnError(err, "unmarshal error")
 				messageArray = append(messageArray, messageModel)
 			}
 		}
@@ -48,7 +50,7 @@ func main() {
 			return response[i].CreatedAt > response[j].CreatedAt
 		})
 
-		ctx.JSON(200, response)
+		ctx.JSON(status, response)
 	})
 
 	r.Run(":8081")

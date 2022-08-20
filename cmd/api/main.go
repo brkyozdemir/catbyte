@@ -25,7 +25,7 @@ func main() {
 		defer conn.Close()
 
 		ch, err := conn.Channel()
-		FailOnError(err, "Failed to open a channel")
+		status := FailOnError(err, "Failed to open a channel")
 		defer ch.Close()
 
 		q, err := ch.QueueDeclare(
@@ -36,7 +36,7 @@ func main() {
 			false,
 			nil,
 		)
-		FailOnError(err, "Failed to declare a queue")
+		status = FailOnError(err, "Failed to declare a queue")
 
 		marshaledMessage, _ := json.Marshal(message)
 		err = ch.Publish(
@@ -48,8 +48,10 @@ func main() {
 				ContentType: "text/plain",
 				Body:        marshaledMessage,
 			})
-		FailOnError(err, "Failed to publish a message")
+		status = FailOnError(err, "Failed to publish a message")
 		log.Printf(" [x] Sent %s\n", string(marshaledMessage))
+
+		c.Status(status)
 	})
 
 	r.Run()
